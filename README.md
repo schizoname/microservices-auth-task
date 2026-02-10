@@ -1,57 +1,48 @@
-# Microservices Auth & Data Processing System
+Microservices Authentication & Text Transformation System
 
-This project consists of two Spring Boot microservices interacting via Docker Compose, utilizing JWT authentication and secure inter-service communication.
+A dual-service Spring Boot application demonstrating secure inter-service communication, JWT authentication, and Docker orchestration.
+🏗 Architecture
 
-## Architecture
-* **Service A (auth-api)**: Port `8080`. Handles user registration, login (JWT), and logs processing requests to PostgreSQL.
-* **Service B (data-api)**: Port `8081`. Performs text transformation. Accessible only via Service A using a shared secret token.
-* **PostgreSQL**: Database storing user credentials and the processing log table.
+    auth-api (Service A): Handles user management, JWT issuance, and persistent logging to PostgreSQL.
+    data-api (Service B): Provides text transformation logic. Protected via internal shared secret.
+    PostgreSQL: Stores user credentials and processing history.
 
----
+🚀 Quick Start
+1. Prerequisites
+    Docker and Docker Compose installed.
+    Java 17+ (if building locally).
 
-## Getting Started
+2. Run with Docker Compose
 
-### Prerequisites
-* Docker and Docker Compose installed.
+From the project root, execute:
+`docker compose up -d --build`
+This command builds both services and starts the PostgreSQL container.
 
-### Running the System
-You can build and start all services (including the database) with a single command:
-docker compose up -d --build
+🧪 Testing the Flow (CURL)
 
-API Usage (CURL Examples)
-1. User Registration
+    Register a user:
 
-Create a new account:
 curl -X POST http://localhost:8080/api/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{"email":"dev@example.com","password":"secretpassword"}'
+-H "Content-Type: application/json" \
+-d '{"email":"test@example.com","password":"password123"}'
 
-2. User Login
+    Login to get JWT:
 
-Authenticate to receive a JWT token:
-`curl -X POST http://localhost:8080/api/auth/login \`
-     `-H "Content-Type: application/json" \`
-     `-d '{"email":"dev@example.com","password":"secretpassword"}'`
+curl -X POST http://localhost:8080/api/auth/login \
+-H "Content-Type: application/json" \
+-d '{"email":"test@example.com","password":"password123"}'
 
-Copy the token value from the JSON response.
+    Process text (Replace <TOKEN> with your actual token):
 
-3. Process Data (Secure Endpoint)
+curl -X POST http://localhost:8080/api/process \
+-H "Authorization: Bearer <TOKEN>" \
+-H "Content-Type: application/json" \
+-d '{"text":"hello world"}'
 
-Send a request to transform text. Replace <YOUR_TOKEN> with the token from the previous step:
-`curl -X POST http://localhost:8080/api/process \
-     `-H "Authorization: Bearer <YOUR_TOKEN>" \`
-     `-H "Content-Type: application/json" \`
-     `-d '{"text":"hello world"}'`
+🔒 Security Implementation
 
-Expected Output: {"result": "DLROW OLLEH"}
-
-
-Security Features
-    Password Hashing: BCrypt is used to secure user passwords in the database.
-    Internal Security: Service B validates the X-Internal-Token header. Direct unauthorized access to Service B is denied (403 Forbidden).
-    Data Persistence: Every successful transformation is logged in the processing_log table with the User ID and timestamps.
+    BCrypt Hashing: All user passwords are encrypted before storage.
     
-Shutdown
-
-To stop and remove containers:
-`docker compose down`
+    Internal Token: data-api validates the X-Internal-Token header for all requests, rejecting direct external traffic.
+    
+    Audit Trail: Every transformation request is logged in the processing_log table with the associated user ID.
