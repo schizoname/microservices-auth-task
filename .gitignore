@@ -1,22 +1,15 @@
-# Скомпільовані файли Java (Maven)
 **/target/
 *.jar
 *.war
 *.ear
-
-# Файли налаштувань IDE (IntelliJ IDEA)
+*.swp
+*.kate-swp
 .idea/
 *.iml
 out/
 .vscode/
-
-# Логи та тимчасові файли
 *.log
 tmp/
-
-# Docker
 .data/
 postgres_data/
-
-# Секретні змінні оточення
 .env
