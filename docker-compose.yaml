@@ -7,12 +7,12 @@ services:
       db:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
-      - SPRING_DATASOURCE_USERNAME=${DB_USER}
-      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME:-test-task}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-test-task}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-root}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
-      - AUTHAPI_APP_SECRET=${SECRET}
+      - AUTHAPI_APP_SECRET=${SECRET:-r0jS0vlF0mdDvbR6sV9udF0odD7yz2asd0gs1g123guw3gn2r}
       - AUTHAPI_APP_LIFETIME=3600000
     ports:
       - "8080:8080"
@@ -24,7 +24,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      - INTERLAL_TOKEN=${INTERNAL_TOKEN}
+      - INTERLAL_TOKEN=${INTERNAL_TOKEN:-my-secret-token}
     ports:
       - "8081:8081"
   db:
